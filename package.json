@@ -2,7 +2,7 @@
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
   "description": "Python print colorful out log messages",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.72.0"
   },
