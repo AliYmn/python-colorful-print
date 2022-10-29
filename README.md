@@ -6,7 +6,8 @@ A shortcut that allows us to print in color in Python.
 
 # Vscode Extension
 
-This extension is available for free in the Visual Studio Code Marketplace
+This extension is available for free in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=AliYaman.python-colorful-print)
+
 
 
 # How to use
