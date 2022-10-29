@@ -6,9 +6,9 @@
   "engines": {
     "vscode": "^1.72.0"
   },
-  "publisher": "AliYmn",
+  "publisher": "AliYaman",
   "author": {
-    "name": "Ali Yaman"
+    "name": "AliYaman"
   },
   "repository": {
     "type": "git",
