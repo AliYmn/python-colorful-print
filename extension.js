@@ -1,27 +1,28 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+const printText = (text) => {
+    const editor = vscode.window.activeTextEditor;
+    const selection = editor.selection;
+	// a bottom line
+    const range = new vscode.Range(selection.start, selection.end);
+	// print it!
+    editor.edit((editBuilder) => {
+        editBuilder.replace(range, text);
+    });
+};
 
-/**
- * @param {vscode.ExtensionContext} context
- */
 function activate(context) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "python-colorful-print" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('python-colorful-print.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Python Colorful Print!');
+	let disposable = vscode.commands.registerCommand('python-colorful-print.colorfulPrint', function () {
+		const textEditor = vscode.window.activeTextEditor;
+		const selectText = textEditor.selection;
+        const text = textEditor.document.getText(selectText);
+		text ?
+		vscode.commands.executeCommand('editor.action.insertLineAfter')
+			.then(() => {
+				const logToInsert = `print('\\033[91m'+'${text}: ' + '\\033[92m', ${text})`;
+				printText(logToInsert);
+			})
+		: vscode.window.showErrorMessage("please select a variable!");
 	});
 
 	context.subscriptions.push(disposable);
