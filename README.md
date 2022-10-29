@@ -2,7 +2,7 @@
 
 A shortcut that allows us to print in color in Python.
 
-<img src="img/result.gif"/>
+<img src="images/demo.gif"/>
 
 # Vscode Extension
 
