@@ -6,16 +6,19 @@
 ![Language](https://img.shields.io/badge/language-JavaScript-yellow)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Mocha Tests](https://img.shields.io/badge/tests-passing-brightgreen)
-![Contributions](https://img.shields.io/badge/contributions-welcome-orange)
 
 
 <p align="center">
-  <img src="https://github.com/AliYmn/python-colorful-print/blob/main/images/logo.png" alt="FFB Logo" width="200" height="200">
+  <img src="https://github.com/AliYmn/python-colorful-print/raw/main/images/logo.png" alt="FFB Logo" width="200" height="200">
 </p>
 
 ## Overview
 
 `python-colorful-print` is a VSCode extension that enhances Python print statements by adding customizable colors to both variable names (keys) and their values. You can choose specific colors for your prints, generate random colors, and also remove or print all variables in your current Python file with ease.
+
+<p align="center">
+  <img src="https://github.com/AliYmn/python-colorful-print/raw/main/images/pcp-demo.gif" alt="FFB Logo">
+</p>
 
 ## Features
 
