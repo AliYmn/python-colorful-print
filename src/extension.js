@@ -29,27 +29,57 @@ class ColorfulPrint {
         });
     }
 
-    insertPrintCommand() {
-        const editor = this.getEditor();
-        const selectText = editor.selection;
-        const text = editor.document.getText(selectText);
-
+    insertPrintCommand(text) {
         const { keyColor, valueColor } = this.getConfiguredColors();
-        if (text) {
-            vscode.commands.executeCommand('editor.action.insertLineAfter')
-                .then(() => {
-                    let logToInsert;
-                    if (keyColor && valueColor) {
-                        logToInsert = `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'${text}: ' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
-                    } else {
-                        // Plain text print if color is disabled
-                        logToInsert = `print('${text}:', ${text})`;
-                    }
-                    this.printText(logToInsert);
-                });
+        let logToInsert;
+        if (keyColor && valueColor) {
+            logToInsert = `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'${text}: ' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
         } else {
-            vscode.window.showErrorMessage("Please select a variable!");
+            logToInsert = `print('${text}:', ${text})`;
         }
+        return logToInsert;
+    }
+
+    addPrintForAllVariables() {
+        const editor = this.getEditor();
+        const document = editor.document;
+        const text = document.getText();
+        const variables = this.extractVariables(text);
+
+        editor.edit((editBuilder) => {
+            variables.forEach(variable => {
+                const logToInsert = this.insertPrintCommand(variable);
+                editBuilder.insert(new vscode.Position(document.lineCount, 0), logToInsert + '\n');
+            });
+        });
+    }
+
+    removeAllPrintStatements() {
+        const editor = this.getEditor();
+        const document = editor.document;
+        const text = document.getText();
+        const printRegex = /print\(.*?\);?/g;
+
+        const matches = [];
+        let match;
+        while ((match = printRegex.exec(text)) !== null) {
+            matches.push(new vscode.Range(document.positionAt(match.index), document.positionAt(match.index + match[0].length)));
+        }
+
+        editor.edit((editBuilder) => {
+            matches.forEach(range => editBuilder.delete(range));
+        });
+    }
+
+    extractVariables(text) {
+        // A basic pattern to capture variable assignments in Python.
+        const variableRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*.*$/gm;
+        const variables = [];
+        let match;
+        while ((match = variableRegex.exec(text)) !== null) {
+            variables.push(match[1]);
+        }
+        return variables;
     }
 
     hexToRGB(hex) {
@@ -69,11 +99,27 @@ class ColorfulPrint {
 function activate(context) {
     const colorfulPrint = new ColorfulPrint();
 
-    let disposable = vscode.commands.registerCommand('python-colorful-print.colorfulPrint', () => {
-        colorfulPrint.insertPrintCommand();
+    let disposablePrintCommand = vscode.commands.registerCommand('python-colorful-print.colorfulPrint', () => {
+        const editor = colorfulPrint.getEditor();
+        const selection = editor.selection;
+        const text = editor.document.getText(selection);
+        if (text) {
+            const logToInsert = colorfulPrint.insertPrintCommand(text);
+            colorfulPrint.printText(logToInsert);
+        } else {
+            vscode.window.showErrorMessage("Please select a variable!");
+        }
     });
 
-    context.subscriptions.push(disposable);
+    let disposablePrintAllVariables = vscode.commands.registerCommand('python-colorful-print.printAllVariables', () => {
+        colorfulPrint.addPrintForAllVariables();
+    });
+
+    let disposableRemoveAllPrints = vscode.commands.registerCommand('python-colorful-print.removeAllPrints', () => {
+        colorfulPrint.removeAllPrintStatements();
+    });
+
+    context.subscriptions.push(disposablePrintCommand, disposablePrintAllVariables, disposableRemoveAllPrints);
 }
 
 function deactivate() {}

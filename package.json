@@ -2,7 +2,7 @@
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
   "description": "Python print colorful out log messages",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -48,6 +48,14 @@
       {
         "command": "python-colorful-print.colorfulPrint",
         "title": "Colorful Print"
+      },
+      {
+        "command": "python-colorful-print.printAllVariables",
+        "title": "Print All Variables"
+      },
+      {
+        "command": "python-colorful-print.removeAllPrints",
+        "title": "Remove All Print Statements"
       }
     ],
     "keybindings": [
@@ -55,6 +63,18 @@
         "command": "python-colorful-print.colorfulPrint",
         "key": "ctrl+shift+l",
         "mac": "cmd+shift+l",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "python-colorful-print.printAllVariables",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "python-colorful-print.removeAllPrints",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
         "when": "editorTextFocus"
       }
     ],
