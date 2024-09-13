@@ -79,6 +79,25 @@ class ColorfulPrint {
     }
 
     /**
+     * Removes all print statements from the active editor.
+     */
+    removeAllPrintStatements() {
+        const editor = this.getEditor();
+        const text = editor.document.getText();
+        const printStatementRegex = /print\([^\)]*\)/g;
+
+        const newText = text.replace(printStatementRegex, '');
+
+        editor.edit(editBuilder => {
+            const fullRange = new vscode.Range(
+                editor.document.positionAt(0),
+                editor.document.positionAt(text.length)
+            );
+            editBuilder.replace(fullRange, newText);
+        });
+    }
+
+    /**
      * Converts a hex color code to an RGB format usable by ANSI escape codes.
      * @param {string} hex The hex color code (e.g., #FF0000).
      * @returns {string} The RGB equivalent as 'r;g;b'.

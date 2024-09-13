@@ -3,6 +3,10 @@
   "displayName": "Python Colorful Print",
   "description": "Python print colorful out log messages",
   "version": "0.1.8",
+  "activationEvents": [
+    "onCommand:python-colorful-print.colorfulPrint",
+    "onCommand:python-colorful-print.removeAllPrints"
+  ],
   "engines": {
     "vscode": "^1.75.0"
   },
