@@ -74,7 +74,10 @@
       "properties": {
         "python-colorful-print.keyColorMode": {
           "type": "string",
-          "enum": ["random", "custom"],
+          "enum": [
+            "random",
+            "custom"
+          ],
           "default": "random",
           "description": "Choose how to set the key (variable name) color. 'random' for random colors, 'custom' for your own color"
         },
@@ -88,7 +91,10 @@
         },
         "python-colorful-print.valueColorMode": {
           "type": "string",
-          "enum": ["random", "custom"],
+          "enum": [
+            "random",
+            "custom"
+          ],
           "default": "random",
           "description": "Choose how to set the value (variable value) color. 'random' for random colors, 'custom' for your own color"
         },
@@ -111,7 +117,7 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "mocha --exit"
+    "test": "node ./test/runTest.js"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.0",
@@ -123,5 +129,8 @@
     "glob": "^8.0.3",
     "mocha": "^10.2.0",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "lint": "^0.8.19"
   }
 }
