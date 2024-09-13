@@ -2,9 +2,9 @@
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
   "description": "Python print colorful out log messages",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "engines": {
-    "vscode": "^1.72.0"
+    "vscode": "^1.75.0"
   },
   "publisher": "AliYaman",
   "author": {
@@ -28,10 +28,7 @@
     "Python",
     "Print",
     "Log",
-    "colorful"
-  ],
-  "activationEvents": [
-    "onCommand:python-colorful-print.colorfulPrint"
+    "Colorful"
   ],
   "main": "./src/extension.js",
   "contributes": {
@@ -50,7 +47,7 @@
     "commands": [
       {
         "command": "python-colorful-print.colorfulPrint",
-        "title": "colorfulPrint"
+        "title": "Colorful Print"
       }
     ],
     "keybindings": [
@@ -60,7 +57,46 @@
         "mac": "cmd+shift+l",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Python Colorful Print Settings",
+      "properties": {
+        "python-colorful-print.keyColor": {
+          "type": "string",
+          "default": "#FF0000",
+          "description": "Hex color code for the key (variable name) in the print statement",
+          "enum": [
+            "#FF0000",
+            "random"
+          ],
+          "enumDescriptions": [
+            "Hex color code (default red)",
+            "Random color for each print"
+          ],
+          "format": "color"
+        },
+        "python-colorful-print.valueColor": {
+          "type": "string",
+          "default": "#00FF00",
+          "description": "Hex color code for the value (variable value) in the print statement",
+          "enum": [
+            "#00FF00",
+            "random"
+          ],
+          "enumDescriptions": [
+            "Hex color code (default green)",
+            "Random color for each print"
+          ],
+          "format": "color"
+        },
+        "python-colorful-print.enableColor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable colorful output in the print statement"
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint .",
@@ -71,7 +107,7 @@
     "@types/glob": "^8.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
-    "@types/vscode": "^1.72.0",
+    "@types/vscode": "^1.75.0",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^8.24.0",
     "glob": "^8.0.3",
