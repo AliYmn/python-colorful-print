@@ -2,7 +2,7 @@
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
   "description": "Python print colorful out log messages",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -50,10 +50,6 @@
         "title": "Colorful Print"
       },
       {
-        "command": "python-colorful-print.printAllVariables",
-        "title": "Print All Variables"
-      },
-      {
         "command": "python-colorful-print.removeAllPrints",
         "title": "Remove All Print Statements"
       }
@@ -66,18 +62,51 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "python-colorful-print.printAllVariables",
-        "key": "ctrl+shift+a",
-        "mac": "cmd+shift+a",
-        "when": "editorTextFocus"
-      },
-      {
         "command": "python-colorful-print.removeAllPrints",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Python Colorful Print Settings",
+      "properties": {
+        "python-colorful-print.keyColorMode": {
+          "type": "string",
+          "enum": ["random", "custom"],
+          "default": "random",
+          "description": "Choose how to set the key (variable name) color. 'random' for random colors, 'custom' for your own color"
+        },
+        "python-colorful-print.keyColorCustom": {
+          "type": "string",
+          "default": "#FF0000",
+          "description": "Custom color for the key (variable name) in hex format",
+          "scope": "window",
+          "markdownDescription": "Pick a custom color for the key (variable name)",
+          "when": "python-colorful-print.keyColorMode == 'custom'"
+        },
+        "python-colorful-print.valueColorMode": {
+          "type": "string",
+          "enum": ["random", "custom"],
+          "default": "random",
+          "description": "Choose how to set the value (variable value) color. 'random' for random colors, 'custom' for your own color"
+        },
+        "python-colorful-print.valueColorCustom": {
+          "type": "string",
+          "default": "#00FF00",
+          "description": "Custom color for the value (variable value) in hex format",
+          "scope": "window",
+          "markdownDescription": "Pick a custom color for the value (variable value)",
+          "when": "python-colorful-print.valueColorMode == 'custom'"
+        },
+        "python-colorful-print.enableColor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable colorful output in print statements"
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint .",

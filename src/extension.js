@@ -24,25 +24,44 @@ class ColorfulPrint {
             return { keyColor: null, valueColor: null };
         }
 
-        const keyColorSetting = vscode.workspace.getConfiguration('python-colorful-print').get('keyColor');
-        const valueColorSetting = vscode.workspace.getConfiguration('python-colorful-print').get('valueColor');
+        const keyColorMode = vscode.workspace.getConfiguration('python-colorful-print').get('keyColorMode');
+        const valueColorMode = vscode.workspace.getConfiguration('python-colorful-print').get('valueColorMode');
 
-        const keyColor = keyColorSetting === 'random' ? this.getRandomColor() : keyColorSetting;
-        const valueColor = valueColorSetting === 'random' ? this.getRandomColor() : valueColorSetting;
+        const keyColor = keyColorMode === 'random' ? this.getRandomColor() : vscode.workspace.getConfiguration('python-colorful-print').get('keyColorCustom');
+        const valueColor = valueColorMode === 'random' ? this.getRandomColor() : vscode.workspace.getConfiguration('python-colorful-print').get('valueColorCustom');
 
         return { keyColor, valueColor };
     }
 
     /**
-     * Replaces the selected text in the editor with the given text.
-     * @param {string} text The text to insert into the editor.
+     * Detects the indentation level for a specific line in the editor.
+     * @param {number} line The line number to check.
+     * @returns {number} The number of spaces at the start of the line.
      */
-    printText(text) {
+    getIndentationLevel(line) {
+        const editor = this.getEditor();
+        const text = editor.document.lineAt(line).text;
+        const match = text.match(/^(\s*)/);
+        return match ? match[1].length : 0; // Return the length of leading spaces
+    }
+
+    /**
+     * Inserts the generated print statement after the selected variable, respecting the indentation.
+     * @param {string} text The text to insert into the editor.
+     * @param {number} indentationLevel The number of spaces for indentation.
+     */
+    printText(text, indentationLevel) {
         const editor = this.getEditor();
         const selection = editor.selection;
-        const range = new vscode.Range(selection.start, selection.end);
+        const position = selection.active;
+
+        // Calculate indentation using the given level
+        const indentation = ' '.repeat(indentationLevel);
+        const newText = `${indentation}${text}\n`;
+
+        const newPosition = new vscode.Position(position.line + 1, 0);
         editor.edit((editBuilder) => {
-            editBuilder.replace(range, text);
+            editBuilder.insert(newPosition, newText); // Ensure it's inserted on a new line
         });
     }
 
@@ -60,59 +79,6 @@ class ColorfulPrint {
     }
 
     /**
-     * Adds print statements for all variables found in the document.
-     */
-    addPrintForAllVariables() {
-        const editor = this.getEditor();
-        const document = editor.document;
-        const text = document.getText();
-        const variables = this.extractVariables(text);
-
-        editor.edit((editBuilder) => {
-            variables.forEach(variable => {
-                const logToInsert = this.insertPrintCommand(variable);
-                editBuilder.insert(new vscode.Position(document.lineCount, 0), logToInsert + '\n');
-            });
-        });
-    }
-
-    /**
-     * Removes all print statements from the document.
-     */
-    removeAllPrintStatements() {
-        const editor = this.getEditor();
-        const document = editor.document;
-        const text = document.getText();
-        const printRegex = /print\(.*?\);?/g;
-
-        const matches = [];
-        let match;
-        while ((match = printRegex.exec(text)) !== null) {
-            matches.push(new vscode.Range(document.positionAt(match.index), document.positionAt(match.index + match[0].length)));
-        }
-
-        editor.edit((editBuilder) => {
-            matches.forEach(range => editBuilder.delete(range));
-        });
-    }
-
-    /**
-     * Extracts all variables from the provided document text.
-     * A variable is considered any valid Python variable assignment.
-     * @param {string} text The document text.
-     * @returns {Array} An array of variable names.
-     */
-    extractVariables(text) {
-        const variableRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*.*$/gm;
-        const variables = [];
-        let match;
-        while ((match = variableRegex.exec(text)) !== null) {
-            variables.push(match[1]);
-        }
-        return variables;
-    }
-
-    /**
      * Converts a hex color code to an RGB format usable by ANSI escape codes.
      * @param {string} hex The hex color code (e.g., #FF0000).
      * @returns {string} The RGB equivalent as 'r;g;b'.
@@ -121,7 +87,7 @@ class ColorfulPrint {
         const bigint = parseInt(hex.substring(1), 16);
         const r = (bigint >> 16) & 255;
         const g = (bigint >> 8) & 255;
-        const b = bigint & 255;
+        const b = (bigint & 255);
         return `${r};${g};${b}`;
     }
 
@@ -146,23 +112,31 @@ function activate(context) {
         const editor = colorfulPrint.getEditor();
         const selection = editor.selection;
         const text = editor.document.getText(selection);
-        if (text) {
-            const logToInsert = colorfulPrint.insertPrintCommand(text);
-            colorfulPrint.printText(logToInsert);
-        } else {
-            vscode.window.showErrorMessage("Please select a variable!");
+        const indentationLevel = colorfulPrint.getIndentationLevel(selection.start.line);
+
+        try {
+            if (text) {
+                const logToInsert = colorfulPrint.insertPrintCommand(text);
+                colorfulPrint.printText(logToInsert, indentationLevel);
+            } else {
+                vscode.window.showErrorMessage("Please select a variable!");
+            }
+        } catch (error) {
+            console.error('Error in colorfulPrint command:', error);
+            vscode.window.showErrorMessage(`Error inserting print statement: ${error.message}`);
         }
     });
 
-    const disposablePrintAllVariables = vscode.commands.registerCommand('python-colorful-print.printAllVariables', () => {
-        colorfulPrint.addPrintForAllVariables();
-    });
-
     const disposableRemoveAllPrints = vscode.commands.registerCommand('python-colorful-print.removeAllPrints', () => {
-        colorfulPrint.removeAllPrintStatements();
+        try {
+            colorfulPrint.removeAllPrintStatements();
+        } catch (error) {
+            console.error('Error in removeAllPrints command:', error);
+            vscode.window.showErrorMessage(`Error removing print statements: ${error.message}`);
+        }
     });
 
-    context.subscriptions.push(disposablePrintCommand, disposablePrintAllVariables, disposableRemoveAllPrints);
+    context.subscriptions.push(disposablePrintCommand, disposableRemoveAllPrints);
 }
 
 /**
