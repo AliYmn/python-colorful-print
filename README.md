@@ -20,6 +20,11 @@
   <img src="https://github.com/AliYmn/python-colorful-print/raw/main/images/pcp-demo.gif" alt="FFB Logo">
 </p>
 
+<p align="center">
+  <img src="https://github.com/AliYmn/python-colorful-print/raw/main/images/remove-all.gif" alt="FFB Logo">
+</p>
+
+
 ## Features
 
 - **Colorful Print Statements:** Automatically inserts `print()` statements for selected variables in your Python code, with customizable color formatting.
