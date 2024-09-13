@@ -10,7 +10,7 @@
 
 
 <p align="center">
-  <img src="./images/logo.jpg" alt="FFB Logo" width="200" height="200">
+  <img src="./images/logo.png" alt="FFB Logo" width="200" height="200">
 </p>
 
 ## Overview
