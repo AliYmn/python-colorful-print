@@ -74,10 +74,12 @@ class ColorfulPrint {
         const editor = vscode.window.activeTextEditor;
         const lineNumber = editor.selection.active.line + 1;
         const { keyColor, valueColor } = this.getConfiguredColors();
+
         if (keyColor && valueColor) {
-            return `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'Line ${lineNumber}: ${text} :' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
+            return `print('==> Line ${lineNumber}: \\033[38;2;${this.hexToRGB(keyColor)}m[${text}]\\033[0m = \\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
         }
-        return `print('Line ${lineNumber}: ${text} :', ${text})`;
+
+        return `print('==> Line ${lineNumber}: [${text}] =', ${text})`;
     }
 
     /**
