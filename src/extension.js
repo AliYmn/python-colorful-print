@@ -73,21 +73,28 @@ class ColorfulPrint {
     insertPrintCommand(text) {
         const { keyColor, valueColor } = this.getConfiguredColors();
         if (keyColor && valueColor) {
-            return `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'${text}: ' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
+            return `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'${text} :' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
         }
-        return `print('${text}:', ${text})`;
+        return `print('${text} :', ${text})`;
     }
 
     /**
-     * Removes all print statements from the active editor.
+     * Removes all print statements and the corresponding line if it becomes empty.
      */
     removeAllPrintStatements() {
         const editor = this.getEditor();
         const text = editor.document.getText();
-        const printStatementRegex = /print\([^\)]*\)/g;
+        const lines = text.split(/\r?\n/);
+        const newLines = lines.map(line => {
+            const printStatementRegex = /print\([^\)]*\)/;
+            if (printStatementRegex.test(line)) {
+                const newLine = line.replace(printStatementRegex, '').trim();
+                return newLine.length > 0 ? newLine : null;
+            }
+            return line;
+        }).filter(line => line !== null);
 
-        const newText = text.replace(printStatementRegex, '');
-
+        const newText = newLines.join('\n');
         editor.edit(editBuilder => {
             const fullRange = new vscode.Range(
                 editor.document.positionAt(0),
@@ -138,7 +145,7 @@ function activate(context) {
                 const logToInsert = colorfulPrint.insertPrintCommand(text);
                 colorfulPrint.printText(logToInsert, indentationLevel);
             } else {
-                vscode.window.showErrorMessage("Please select a variable!");
+                vscode.window.showErrorMessage("Please select a variable");
             }
         } catch (error) {
             console.error('Error in colorfulPrint command:', error);
