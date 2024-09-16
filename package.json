@@ -1,8 +1,8 @@
 {
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
-  "description": "Python print colorful out log messages",
-  "version": "0.2.0",
+  "description": "Enhances Python print statements with customizable colored output for improved readability of log messages.",
+  "version": "0.2.1",
   "activationEvents": [
     "onCommand:python-colorful-print.colorfulPrint",
     "onCommand:python-colorful-print.removeAllPrints"
