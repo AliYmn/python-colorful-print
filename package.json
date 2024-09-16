@@ -2,7 +2,7 @@
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
   "description": "Enhances Python print statements with customizable colored output for improved readability of log messages.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "activationEvents": [
     "onCommand:python-colorful-print.colorfulPrint",
     "onCommand:python-colorful-print.removeAllPrints"
@@ -114,6 +114,16 @@
           "type": "boolean",
           "default": true,
           "description": "Enable or disable colorful output in print statements"
+        },
+        "python-colorful-print.enableDateStamp": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable or disable date stamp in print statements"
+        },
+        "python-colorful-print.enableTypeInfo": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable variable type information in print statements"
         }
       }
     }
