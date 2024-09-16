@@ -66,16 +66,18 @@ class ColorfulPrint {
     }
 
     /**
-     * Inserts a print statement for the selected variable with the configured key and value colors.
+     * Inserts a print statement for the selected variable with the configured key and value colors and line information.
      * @param {string} text The variable name to print.
-     * @returns {string} The generated print statement.
+     * @returns {string} The generated print statement with line information.
      */
     insertPrintCommand(text) {
+        const editor = vscode.window.activeTextEditor;
+        const lineNumber = editor.selection.active.line + 1;
         const { keyColor, valueColor } = this.getConfiguredColors();
         if (keyColor && valueColor) {
-            return `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'${text} :' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
+            return `print('\\033[38;2;${this.hexToRGB(keyColor)}m'+'Line ${lineNumber}: ${text} :' + '\\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
         }
-        return `print('${text} :', ${text})`;
+        return `print('Line ${lineNumber}: ${text} :', ${text})`;
     }
 
     /**
