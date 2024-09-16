@@ -1,12 +1,11 @@
 
 # Python Colorful Print - VSCode Extension
 
-![Version](https://img.shields.io/badge/version-0.1.6-blue)
+![Version](https://img.shields.io/badge/version-v2.2.3-blue)
 ![VSCode](https://img.shields.io/badge/VSCode-1.75.0+-brightgreen.svg)
 ![Language](https://img.shields.io/badge/language-JavaScript-yellow)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Mocha Tests](https://img.shields.io/badge/tests-passing-brightgreen)
-
 
 <p align="center">
   <img src="https://github.com/AliYmn/python-colorful-print/raw/main/images/logo.png" alt="FFB Logo" width="200" height="200">
