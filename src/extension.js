@@ -66,45 +66,63 @@ class ColorfulPrint {
     }
 
     /**
-     * Inserts a print statement for the selected variable with the configured key and value colors and line information.
+     * Inserts a print statement for the selected variable with the configured key and value colors, line information, date stamp, and variable type information.
      * @param {string} text The variable name to print.
-     * @returns {string} The generated print statement with line information.
+     * @returns {string} The generated print statement with line information, date stamp, and variable type.
      */
     insertPrintCommand(text) {
         const editor = vscode.window.activeTextEditor;
         const lineNumber = editor.selection.active.line + 1;
         const { keyColor, valueColor } = this.getConfiguredColors();
 
-        if (keyColor && valueColor) {
-            return `print('==> Line ${lineNumber}: \\033[38;2;${this.hexToRGB(keyColor)}m[${text}]\\033[0m = \\033[38;2;${this.hexToRGB(valueColor)}m', ${text}, '\\033[0m')`;
+        const config = vscode.workspace.getConfiguration('python-colorful-print');
+        const enableDateStamp = config.get('enableDateStamp');
+        const enableTypeInfo = config.get('enableTypeInfo');
+
+        let dateStamp = '';
+        if (enableDateStamp) {
+            const now = new Date();
+            dateStamp = now.toISOString();
         }
 
-        return `print('==> Line ${lineNumber}: [${text}] =', ${text})`;
+        let typeInfo = ''; // Initialize type info
+        if (enableTypeInfo) {
+            typeInfo = `({type(${text}).__name__})`; // Assign type info if enabled
+        }
+
+        // Colorful print with type info
+        if (keyColor && valueColor) {
+            return `print(f'${dateStamp} ==> Line ${lineNumber}: \\033[38;2;${this.hexToRGB(keyColor)}m[${text}]\\033[0m${typeInfo} = \\033[38;2;${this.hexToRGB(valueColor)}m{${text}}\\033[0m')`;
+        }
+
+        // Non-colorful print with type info
+        return `print(f'${dateStamp} ==> Line ${lineNumber}: [${text}]${typeInfo} = {${text}}')`;
     }
 
     /**
      * Removes all print statements and the corresponding line if it becomes empty.
-     */
+    */
     removeAllPrintStatements() {
         const editor = this.getEditor();
         const text = editor.document.getText();
-        const lines = text.split(/\r?\n/);
-        const newLines = lines.map(line => {
-            const printStatementRegex = /print\([^\)]*\)/;
-            if (printStatementRegex.test(line)) {
-                const newLine = line.replace(printStatementRegex, '').trim();
-                return newLine.length > 0 ? newLine : null;
-            }
-            return line;
-        }).filter(line => line !== null);
+        const lines = text.split(/\r?\n/); // Split the document into lines
 
+        // Define a regex to match any print statements
+        const printStatementRegex = /^\s*print\(.*\)\s*;?\s*$/;
+
+        // Filter the lines to remove the ones with print statements
+        const newLines = lines.filter(line => !printStatementRegex.test(line));
+
+        // Join the remaining lines back into a single string
         const newText = newLines.join('\n');
+
+        // Edit the document and replace the content with the filtered text
         editor.edit(editBuilder => {
             const fullRange = new vscode.Range(
-                editor.document.positionAt(0),
-                editor.document.positionAt(text.length)
+                editor.document.positionAt(0), // Start of the document
+                editor.document.positionAt(text.length) // End of the document
             );
-            editBuilder.replace(fullRange, newText);
+            editBuilder.replace(fullRange, newText); // Replace the entire document content with the new text
         });
     }
 
