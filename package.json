@@ -2,7 +2,7 @@
   "name": "python-colorful-print",
   "displayName": "Python Colorful Print",
   "description": "Enhances Python print statements with customizable colored output for improved readability of log messages.",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "activationEvents": [
     "onCommand:python-colorful-print.colorfulPrint",
     "onCommand:python-colorful-print.removeAllPrints"
@@ -76,6 +76,11 @@
       "type": "object",
       "title": "Python Colorful Print Settings",
       "properties": {
+        "python-colorful-print.enableLineInfo": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable line number information in print statements"
+        },
         "python-colorful-print.keyColorMode": {
           "type": "string",
           "enum": [

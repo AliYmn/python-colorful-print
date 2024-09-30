@@ -78,6 +78,7 @@ class ColorfulPrint {
         const config = vscode.workspace.getConfiguration('python-colorful-print');
         const enableDateStamp = config.get('enableDateStamp');
         const enableTypeInfo = config.get('enableTypeInfo');
+        const enableLineInfo = config.get('enableLineInfo');
 
         let dateStamp = '';
         if (enableDateStamp) {
@@ -85,18 +86,21 @@ class ColorfulPrint {
             dateStamp = now.toISOString();
         }
 
-        let typeInfo = ''; // Initialize type info
+        let typeInfo = '';
         if (enableTypeInfo) {
-            typeInfo = `({type(${text}).__name__})`; // Assign type info if enabled
+            typeInfo = `({type(${text}).__name__})`;
         }
 
-        // Colorful print with type info
+        let lineInfo = '';
+        if (enableLineInfo) {
+            lineInfo = `[Line ${lineNumber}]: `;
+        }
+
         if (keyColor && valueColor) {
-            return `print(f'${dateStamp} ==> Line ${lineNumber}: \\033[38;2;${this.hexToRGB(keyColor)}m[${text}]\\033[0m${typeInfo} = \\033[38;2;${this.hexToRGB(valueColor)}m{${text}}\\033[0m')`;
+            return `print(f'${dateStamp} ==> ${lineInfo}\\033[38;2;${this.hexToRGB(keyColor)}m[${text}]\\033[0m${typeInfo} = \\033[38;2;${this.hexToRGB(valueColor)}m{${text}}\\033[0m')`;
         }
 
-        // Non-colorful print with type info
-        return `print(f'${dateStamp} ==> Line ${lineNumber}: [${text}]${typeInfo} = {${text}}')`;
+        return `print(f'${dateStamp} ==> ${lineInfo}[${text}]${typeInfo} = {${text}}')`;
     }
 
     /**
@@ -190,7 +194,7 @@ function activate(context) {
 /**
  * Deactivates the extension.
  */
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
     activate,
